@@ -231,11 +231,11 @@ function SetGameMode() {
 		inventory.Build.Value = true;
 	}
 
-	// получаем время основной битвы по размеру карты
-	const gameLength = GameMode.Parameters.GetString('GameLength');
-	const gameTime = GAME_MODE_TIMES[gameLength] || GAME_MODE_TIMES['M'];
+	// Убираем ограничение по времени, задавая большой таймер или останавливая таймер:
+	// mainTimer.Restart(gameTime); - старая строка
 
-	mainTimer.Restart(gameTime);
+	mainTimer.Stop(); // отключаем таймер
+
 	Spawns.GetContext().Despawn();
 	SpawnTeams();
 }
