@@ -9,7 +9,7 @@ export const DISPLAY_NAME = "by xJetryy";
 export const TEAM1_SPAWN = 1;
 export const TEAM2_SPAWN = 2;
 
-// ⚫ Чёрный цвет команды
+// цвет команды
 const BLACK_COLOR = new Color(0, 0, 0, 1);
 
 export function create_team_1() {
