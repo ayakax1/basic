@@ -23,24 +23,14 @@ if (timer) timer.Value = 999999;
 let maxKills = GameMode.Parameters.Get("MaxKills");
 if (maxKills) maxKills.Value = 0;
 
-// === ВЫБОР КОМАНДЫ ===
-Teams.OnRequestJoinTeam.Add(function(player, team){
-    if (!team) return;
-
-    team.Add(player);
-});
-
-// ❗ НЕ ДЕЛАЕМ СПАВН ТУТ (избегаем двойного спавна)
+// ❗ УБРАН OnRequestJoinTeam — теперь стандартный вход работает
 
 // === АВТО-РЕСПАВН ===
 Teams.OnPlayerDie.Add(function(player){
 
     setTimeout(function(){
 
-        // проверка чтобы не крашилось
         if (!player) return;
-
-        // если вдруг уже жив — не спавним
         if (player.IsAlive) return;
 
         player.Spawns.Spawn();
