@@ -1,39 +1,50 @@
 import { Color } from 'pixel_combats/basic';
-import { Teams, GameMode, Spawns } from 'pixel_combats/room';
+import { Teams, GameMode } from 'pixel_combats/room';
 
-// 1. Константы
-const TEAM_NAME_1 = "Team1";
-const TEAM_NAME_2 = "Team2";
-const DISPLAY_NAME = "by xJetryy";
-const BLACK_COLOR = new Color(0, 0, 0, 1);
+// === КОНСТАНТЫ ===
+const TEAM_1 = "Team1";
+const TEAM_2 = "Team2";
 
-// 2. Создаем команды сразу
-Teams.Add(TEAM_NAME_1, "Черные " + DISPLAY_NAME, BLACK_COLOR);
-Teams.Add(TEAM_NAME_2, "Тени " + DISPLAY_NAME, BLACK_COLOR);
+const COLOR_1 = new Color(0, 0, 0, 1);
+const COLOR_2 = new Color(0.15, 0.15, 0.15, 1);
 
-// Настраиваем точки спавна для каждой команды
-Teams.Get(TEAM_NAME_1).Spawns.SpawnPointsGroups.Add(1);
-Teams.Get(TEAM_NAME_2).Spawns.SpawnPointsGroups.Add(2);
+// === СОЗДАНИЕ КОМАНД ===
+Teams.Add(TEAM_1, "Черные", COLOR_1);
+Teams.Add(TEAM_2, "Тени", COLOR_2);
 
-// 3. БЕСКОНЕЧНОСТЬ: Отключаем таймер
-GameMode.Parameters.Get("Timer").Value = 0; // В PC2 значение 0 обычно делает таймер бесконечным или отключает его
-GameMode.Parameters.Get("MaxKills").Value = 0; // Игра не кончится по киллам
+// === СПАВН ГРУППЫ ===
+Teams.Get(TEAM_1).Spawns.SpawnPointsGroups.Add(1);
+Teams.Get(TEAM_2).Spawns.SpawnPointsGroups.Add(2);
 
-// 4. ЛОГИКА ВХОДА
-// Когда игрок выбирает команду в меню
+// === БЕСКОНЕЧНЫЙ РЕЖИМ ===
+let timer = GameMode.Parameters.Get("Timer");
+if (timer) timer.Value = 999999;
+
+let maxKills = GameMode.Parameters.Get("MaxKills");
+if (maxKills) maxKills.Value = 0;
+
+// === ВЫБОР КОМАНДЫ ===
 Teams.OnRequestJoinTeam.Add(function(player, team){
+    if (!team) return;
+
     team.Add(player);
 });
 
-// Когда игрок зашел в команду — спавним его персонажа
-Teams.OnPlayerJoinedTeam.Add(function(player){
-    player.Spawns.Spawn();
-});
+// ❗ НЕ ДЕЛАЕМ СПАВН ТУТ (избегаем двойного спавна)
 
-// 5. АВТО-РЕСПАВН
+// === АВТО-РЕСПАВН ===
 Teams.OnPlayerDie.Add(function(player){
-    // Ждем 3 секунды и возрождаем
+
     setTimeout(function(){
+
+        // проверка чтобы не крашилось
+        if (!player) return;
+
+        // если вдруг уже жив — не спавним
+        if (player.IsAlive) return;
+
         player.Spawns.Spawn();
+
     }, 3000);
+
 });
